@@ -13,11 +13,22 @@ public class Server {
 
   private String serverName;
 
+  private int serverNumber;
+
+  private boolean isArchived = false;
+
   public Server() {
   }
 
-  public Server(String serverName) {
+  public Server(String serverName, int serverNumber) {
     this.serverName = serverName;
+    this.serverNumber = serverNumber;
+  }
+
+  public Server(Long id, String serverName, int serverNumber) {
+    this.id = id;
+    this.serverName = serverName;
+    this.serverNumber = serverNumber;
   }
 
   public Long getId() {
@@ -30,5 +41,21 @@ public class Server {
 
   public void setServerName(String serverName) {
     this.serverName = serverName;
+  }
+
+  public int getServerNumber() {
+    return serverNumber;
+  }
+
+  public void setServerNumber(int serverNumber) {
+    this.serverNumber = serverNumber;
+  }
+
+  public boolean getIsArchived() {
+    return isArchived;
+  }
+
+  public void setIsArchived(boolean archived) {
+    isArchived = archived;
   }
 }

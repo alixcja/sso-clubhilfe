@@ -18,6 +18,10 @@ public class AdRequest extends AbstractBaseRequest {
 
   private String youtubeUrl;
 
+  private boolean wasDeclined = false;
+
+  private RequestStatus status = RequestStatus.PENDING;
+
   public AdRequest() {
   }
 
@@ -77,5 +81,21 @@ public class AdRequest extends AbstractBaseRequest {
 
   public void setYoutubeUrl(String youtubeUrl) {
     this.youtubeUrl = youtubeUrl;
+  }
+
+  public boolean isWasDeclined() {
+    return wasDeclined;
+  }
+
+  public void setWasDeclined(boolean wasDeclined) {
+    this.wasDeclined = wasDeclined;
+  }
+
+  public RequestStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(RequestStatus status) {
+    this.status = status;
   }
 }

@@ -1,11 +1,9 @@
 package de.alixcja.clubhilfe.requestserivce.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.alixcja.clubhilfe.requestserivce.entity.Server;
 import de.alixcja.clubhilfe.requestserivce.repository.ServerRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,7 +34,7 @@ class ServerControllerTest {
   private ServerRepository serverRepository;
 
   @Test
-  void shouldReturnServer1() throws Exception {
+  void shouldReturnServerById1() throws Exception {
     Server newServer = new Server("Winter Star", 1);
     Mockito.when(serverRepository.findById(1L)).thenReturn(Optional.of(newServer));
     String responseBody = objectMapper.writeValueAsString(newServer);

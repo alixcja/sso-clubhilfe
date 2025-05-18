@@ -1,10 +1,12 @@
 package de.alixcja.clubhilfe.requestserivce.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 
 @Entity
 public class AdRequest extends AbstractBaseRequest {
+
   @ManyToOne
   private Server server;
 
@@ -18,9 +20,7 @@ public class AdRequest extends AbstractBaseRequest {
 
   private String youtubeUrl;
 
-  private boolean wasDeclined = false;
-
-  private RequestStatus status = RequestStatus.PENDING;
+  private boolean isArchived = false;
 
   public AdRequest() {
   }
@@ -83,19 +83,11 @@ public class AdRequest extends AbstractBaseRequest {
     this.youtubeUrl = youtubeUrl;
   }
 
-  public boolean isWasDeclined() {
-    return wasDeclined;
+  public boolean isArchived() {
+    return isArchived;
   }
 
-  public void setWasDeclined(boolean wasDeclined) {
-    this.wasDeclined = wasDeclined;
-  }
-
-  public RequestStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(RequestStatus status) {
-    this.status = status;
+  public void setArchived(boolean archived) {
+    isArchived = archived;
   }
 }

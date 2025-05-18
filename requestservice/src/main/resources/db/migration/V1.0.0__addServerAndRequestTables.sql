@@ -3,7 +3,10 @@ CREATE SEQUENCE ad_request_seq START WITH 1 INCREMENT BY 50;
 
 CREATE TABLE server (
     id BIGINT NOT NULL PRIMARY KEY,
-    server_name VARCHAR(255) NOT NULL
+    server_name VARCHAR(255) NOT NULL,
+    server_number INT NOT NULL,
+    is_archived BOOLEAN,
+    creation_date DATE
 );
 
 CREATE TABLE ad_request (
@@ -16,13 +19,14 @@ CREATE TABLE ad_request (
     message TEXT,
     status VARCHAR(255),
     is_processed_by BIGINT,
-
+    is_archived BOOLEAN,
     server_id BIGINT,
     owner_name VARCHAR(255),
     size INT,
     description TEXT,
     homepage_url VARCHAR(255),
     youtube_url VARCHAR(255),
+    creation_date DATE,
 
     CONSTRAINT fk_adrequest_server FOREIGN KEY (server_id) REFERENCES server(id)
 );

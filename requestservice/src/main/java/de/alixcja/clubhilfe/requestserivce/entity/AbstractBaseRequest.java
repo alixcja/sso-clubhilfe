@@ -4,9 +4,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @MappedSuperclass
 abstract class AbstractBaseRequest {
+
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
@@ -26,6 +30,9 @@ abstract class AbstractBaseRequest {
   private RequestStatus status = RequestStatus.PENDING;
 
   private Long isProcessedBy;
+
+  @CreationTimestamp
+  private LocalDateTime creationDate;
 
   public AbstractBaseRequest() {
   }
@@ -105,5 +112,13 @@ abstract class AbstractBaseRequest {
 
   public void setIsProcessedBy(Long isProcessedBy) {
     this.isProcessedBy = isProcessedBy;
+  }
+
+  public LocalDateTime getCreationDate() {
+    return creationDate;
+  }
+
+  public void setCreationDate(LocalDateTime creationDate) {
+    this.creationDate = creationDate;
   }
 }

@@ -2,18 +2,18 @@ package de.alixcja.clubhilfe.requestserivce.controller;
 
 import de.alixcja.clubhilfe.requestserivce.entity.AdRequest;
 import de.alixcja.clubhilfe.requestserivce.entity.RequestStatus;
-import de.alixcja.clubhilfe.requestserivce.entity.Server;
 import de.alixcja.clubhilfe.requestserivce.repository.AdRequestRepository;
-import de.alixcja.clubhilfe.requestserivce.repository.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 @RestController
@@ -23,17 +23,19 @@ public class AdRequestController {
   AdRequestRepository adRequestRepository;
 
   @GetMapping("/ad-requests")
-  public List<AdRequest> fetchAllAdRequests(@RequestParam(required = false) RequestStatus status, @RequestParam(required = false) Boolean wasDeclined) {
-    if (status != null && wasDeclined != null) {
-      adRequestRepository.findByStatusAndWasDeclined(status, wasDeclined);
+  public Page<AdRequest> fetchAllAdRequests(@ModelAttribute GetQueryParameters parameters) {
+
+    Pageable pageable;
+    if (parameters.getSortBy() != null && parameters.getDirection() != null) {
+      Sort sort = parameters.getDirection().equalsIgnoreCase("desc") ?
+              Sort.by(parameters.getSortBy()).descending() :
+              Sort.by(parameters.getSortBy()).ascending();
+      pageable = PageRequest.of(parameters.getPage(), parameters.getSize(), sort);
+    } else {
+      pageable = PageRequest.of(parameters.getPage(), parameters.getSize());
     }
-    if (wasDeclined != null) {
-      adRequestRepository.findByWasDeclined(wasDeclined);
-    }
-    if (status != null) {
-      adRequestRepository.findByStatus(status);
-    }
-    return adRequestRepository.findAll();
+
+    return adRequestRepository.findAll(pageable);
   }
 
   @GetMapping("/ad-requests/{id}")
@@ -44,18 +46,17 @@ public class AdRequestController {
   @PostMapping("/ad-requests")
   public ResponseEntity<AdRequest> createAdRequest(@RequestBody AdRequest request) {
     AdRequest saved = adRequestRepository.save(request);
-    return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(saved);
+    return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(saved);
   }
 
-  @PutMapping("/ad-requests/{id}/decline")
-  public ResponseEntity<?> updateAdRequestById(@PathVariable("id") Long id) {
+  // TODO: Person who updates status should be set as "processedBy"
+  @PutMapping("/ad-requests/{id}")
+  public ResponseEntity<?> updateStatusAdRequestById(@PathVariable("id") Long id, @RequestBody RequestStatus status) {
     AdRequest adRequestToUpdate = adRequestRepository.findById(id).orElseThrow(getAdRequestByIdNotFound(id));
-    adRequestToUpdate.setWasDeclined(true);
+    adRequestToUpdate.setStatus(status);
     adRequestRepository.save(adRequestToUpdate);
     return ResponseEntity.noContent().build();
   }
-
-  // TODO: Implement put endpoint to update status of request
 
   private static Supplier<ResponseStatusException> getAdRequestByIdNotFound(Long id) {
     String exceptionMessage = String.format("Ad request with id %d not found", id);

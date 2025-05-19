@@ -3,8 +3,10 @@ package de.alixcja.clubhilfe.requestserivce.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.alixcja.clubhilfe.requestserivce.entity.Server;
 import de.alixcja.clubhilfe.requestserivce.repository.ServerRepository;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,16 +14,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class ServerControllerTest {
 
   @Autowired
@@ -30,17 +34,24 @@ class ServerControllerTest {
   @Autowired
   private ObjectMapper objectMapper;
 
-  @MockitoBean
+  @Autowired
   private ServerRepository serverRepository;
+
+  private Server winterStar;
+
+  @BeforeEach
+  @Transactional
+  void setUp() {
+    Server newServer = new Server("Winter Star", 1);
+    winterStar = serverRepository.save(newServer);
+  }
 
   @Test
   void shouldReturnServerById1() throws Exception {
-    Server newServer = new Server("Winter Star", 1);
-    Mockito.when(serverRepository.findById(1L)).thenReturn(Optional.of(newServer));
-    String responseBody = objectMapper.writeValueAsString(newServer);
+    String responseBody = objectMapper.writeValueAsString(winterStar);
 
     this.mockMvc
-            .perform(get("/servers/1"))
+            .perform(get("/servers/" + winterStar.getId()))
             .andExpect(status().isOk())
             .andExpect(content()
                     .string(containsString(responseBody)));
@@ -48,11 +59,8 @@ class ServerControllerTest {
 
   @Test
   void shouldReturn404DueNonExistingId() throws Exception {
-    Mockito.when(serverRepository.findById(1L)).thenReturn(Optional.empty());
-
     this.mockMvc
-            .perform(get("/servers/1"))
-            .andDo(print())
+            .perform(get("/servers/9999"))
             .andExpect(status()
                     .isNotFound());
   }
@@ -60,44 +68,38 @@ class ServerControllerTest {
   @Test
   void shouldCreateServer() throws Exception {
     Server newServer = new Server("Winter Star", 1);
-    Mockito.when(serverRepository.save(Mockito.any(Server.class))).thenReturn(newServer);
-    String responseBody = objectMapper.writeValueAsString(newServer);
+    String requestBody = objectMapper.writeValueAsString(newServer);
 
     mockMvc.perform(post("/servers")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(responseBody))
-            .andExpect(status().isCreated())
-            .andExpect(content()
-              .string(containsString(responseBody)));
+                    .content(requestBody))
+            .andExpect(status().isCreated());
+
+    List<Server> servers = serverRepository.findAll();
+    assertEquals(2, servers.size());
   }
 
   @Test
   void shouldUpdateServerById() throws Exception {
-    Server server = new Server("Winter Star", 1);
     Server updatedServer = new Server("Autumn Star", 1);
 
-    Mockito.when(serverRepository.findById(1L)).thenReturn(Optional.of(server));
-    Mockito.when(serverRepository.save(Mockito.any(Server.class))).thenReturn(updatedServer);
+    String requestBody = objectMapper.writeValueAsString(updatedServer);
 
-    String requestBody = objectMapper.writeValueAsString(server);
-    String responseBody = objectMapper.writeValueAsString(updatedServer);
+    mockMvc.perform(put("/servers/" + winterStar.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody));
 
-    mockMvc.perform(put("/servers/1")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(requestBody))
-            .andExpect(status().isOk())
-            .andExpect(content().json(responseBody));
+    Optional<Server> byId = serverRepository.findById(winterStar.getId());
+    assertEquals("Autumn Star", byId.get().getServerName());
+    assertEquals(1, byId.get().getServerNumber());
   }
 
   @Test
   void shouldNotUpdateServerById() throws Exception {
-    Mockito.when(serverRepository.findById(1L)).thenReturn(Optional.empty());
-
     Server updatedServer = new Server("Autumn Star", 1);
     String requestBody = objectMapper.writeValueAsString(updatedServer);
 
-
-    mockMvc.perform(put("/servers/1")
+    mockMvc.perform(put("/servers/9999")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(requestBody))
             .andExpect(status().isNotFound());
@@ -105,29 +107,20 @@ class ServerControllerTest {
 
   @Test
   void shouldArchiveServerById() throws Exception {
-    Server archivedServer = new Server("Autumn Star", 1);
-
-    Mockito.when(serverRepository.findById(1L)).thenReturn(Optional.of(archivedServer));
-    Mockito.when(serverRepository.save(archivedServer)).thenReturn(archivedServer);
-
-    String requestBody = objectMapper.writeValueAsString(archivedServer);
-
-    mockMvc.perform(put("/servers/1/archive")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(requestBody))
+    mockMvc.perform(put("/servers/" + winterStar.getId() + "/archive")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
   }
 
   @Test
   void shouldNotArchiveServerById() throws Exception {
-    Mockito.when(serverRepository.findById(1L)).thenReturn(Optional.empty());
-
-    Server updatedServer = new Server("Autumn Star", 1);
-    String requestBody = objectMapper.writeValueAsString(updatedServer);
-
-    mockMvc.perform(put("/servers/1/archive")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(requestBody))
+    mockMvc.perform(put("/servers/9999/archive")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
+  }
+
+  @AfterEach
+  void tearDown() {
+    serverRepository.deleteAll();;
   }
 }

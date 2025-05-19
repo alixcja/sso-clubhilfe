@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 class AdRequestControllerTest {
+
   @Autowired
   private MockMvc mockMvc;
 
@@ -112,8 +113,10 @@ class AdRequestControllerTest {
 
   @Test
   void shouldReturn404WhenAdRequestNotFound() throws Exception {
-    mockMvc.perform(get("/ad-requests/9999"))
-            .andExpect(status().isNotFound());
+    mockMvc
+            .perform(get("/ad-requests/9999"))
+            .andExpect(status()
+                    .isNotFound());
   }
 
   @Test

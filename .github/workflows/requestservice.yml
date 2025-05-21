@@ -32,10 +32,8 @@ jobs:
           image: maven:3.9.9-eclipse-temurin-21
           options: -v ${{ github.workspace }}:/workspace -w /workspace
           run: |
-            ls -la
-            cd requestservice
-            mvn -B clean package
-
+            cd requestservice && mvn -B clean package
+            
       - name: Build Docker image
         run: |
           docker build -f src/main/docker/Dockerfile.jvm -t alixcja/clubhilfe-requestservice:dev-${{ env.TAG }} .

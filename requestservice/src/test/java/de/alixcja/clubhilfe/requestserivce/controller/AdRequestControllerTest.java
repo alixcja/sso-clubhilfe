@@ -98,7 +98,7 @@ class AdRequestControllerTest {
     second.setStatus(RequestStatus.PENDING);
     AdRequest first = new AdRequest();
     first .setClubName("Alpha Club");
-    second.setStatus(RequestStatus.COMPLETED);
+    first.setStatus(RequestStatus.COMPLETED);
     adRequestRepository.saveAll(List.of(first, second));
 
     mockMvc.perform(get("/ad-requests")

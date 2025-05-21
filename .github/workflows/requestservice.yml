@@ -32,10 +32,9 @@ jobs:
           image: maven:3.9.9-eclipse-temurin-21
           options: -v ${{ github.workspace }}:/workspace -w /workspace
           run: |
-            run: |
-              pwd
-              ls -la
-              ls -la requestservice || echo "requestservice not found"
+            pwd
+            ls -la
+            ls -la requestservice || echo "requestservice not found"
 
             
       - name: Build Docker image

@@ -1,6 +1,8 @@
 package de.alixcja.clubhilfe.requestserivce.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.alixcja.clubhilfe.requestserivce.PostgreSQLTestDatabase;
+import de.alixcja.clubhilfe.requestserivce.PostgreSQLTestDatabaseConfig;
 import de.alixcja.clubhilfe.requestserivce.entity.AdRequest;
 import de.alixcja.clubhilfe.requestserivce.entity.RequestStatus;
 import de.alixcja.clubhilfe.requestserivce.entity.Server;
@@ -26,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class AdRequestControllerTest {
+class AdRequestControllerTest extends PostgreSQLTestDatabaseConfig {
 
   @Autowired
   private MockMvc mockMvc;
@@ -93,11 +95,11 @@ class AdRequestControllerTest {
 
   @Test
   void shouldReturnAdRequestsSortedByStatusDesc() throws Exception {
-    AdRequest second  = new AdRequest();
+    AdRequest second = new AdRequest();
     second.setClubName("Beta Club");
     second.setStatus(RequestStatus.PENDING);
     AdRequest first = new AdRequest();
-    first .setClubName("Alpha Club");
+    first.setClubName("Alpha Club");
     first.setStatus(RequestStatus.COMPLETED);
     adRequestRepository.saveAll(List.of(first, second));
 

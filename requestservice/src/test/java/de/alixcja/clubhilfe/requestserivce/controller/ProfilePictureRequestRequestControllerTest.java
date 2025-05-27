@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -38,6 +39,17 @@ class ProfilePictureRequestRequestControllerTest extends PostgreSQLTestDatabase 
   private ProfilePictureRepository profilePictureRepository;
 
   @Test
+  void shouldReturnUnauthorized() throws Exception {
+    ProfilePictureRequest request = new ProfilePictureRequest("Gold Roses Family", "www.instagram.com/gold-roses-family", "goldrosesfamily@gmail.com", true, false, "Should be blue and contain a friesian with cylinder.");
+    profilePictureRepository.save(request);
+
+    mockMvc
+            .perform(get("/profile-picture-requests/" + request.getId()))
+            .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldReturnProfilePictureRequestById1() throws Exception {
     ProfilePictureRequest request = new ProfilePictureRequest("Gold Roses Family", "www.instagram.com/gold-roses-family", "goldrosesfamily@gmail.com", true, false, "Should be blue and contain a friesian with cylinder.");
     profilePictureRepository.save(request);
@@ -52,6 +64,7 @@ class ProfilePictureRequestRequestControllerTest extends PostgreSQLTestDatabase 
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldReturnProfilePictureRequestSortedByClubNameDesc() throws Exception {
     ProfilePictureRequest request1 = new ProfilePictureRequest();
     request1.setClubName("Alpha Club");
@@ -72,6 +85,7 @@ class ProfilePictureRequestRequestControllerTest extends PostgreSQLTestDatabase 
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldReturnProfilePictureRequestsSortedByStatusAsc() throws Exception {
     ProfilePictureRequest request1 = new ProfilePictureRequest();
     request1.setClubName("Alpha Club");
@@ -93,6 +107,7 @@ class ProfilePictureRequestRequestControllerTest extends PostgreSQLTestDatabase 
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldReturn404WhenProfilePictureRequestNotFound() throws Exception {
     mockMvc
             .perform(get("/profile-picture-requests/9999"))
@@ -116,6 +131,7 @@ class ProfilePictureRequestRequestControllerTest extends PostgreSQLTestDatabase 
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldUpdateStatusProfilePictureRequestById() throws Exception {
     ProfilePictureRequest existing = new ProfilePictureRequest();
     existing.setClubName("Club to update");
@@ -133,6 +149,7 @@ profilePictureRepository.save(existing);
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldNotUpdateStatusByIdDueInvalidProfilePictureRequestId() throws Exception {
     String newStatusJson = objectMapper.writeValueAsString(RequestStatus.COMPLETED);
 

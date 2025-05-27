@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -47,6 +48,14 @@ class ServerControllerTest extends PostgreSQLTestDatabase {
   }
 
   @Test
+  void shouldReturnUnauthorized() throws Exception {
+    this.mockMvc
+            .perform(post("/servers"))
+            .andExpect(status().isUnauthorized());
+  }
+
+
+  @Test
   void shouldReturnServerById1() throws Exception {
     String responseBody = objectMapper.writeValueAsString(winterStar);
 
@@ -66,6 +75,7 @@ class ServerControllerTest extends PostgreSQLTestDatabase {
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldCreateServer() throws Exception {
     Server newServer = new Server("Winter Star", 1);
     String requestBody = objectMapper.writeValueAsString(newServer);
@@ -80,6 +90,7 @@ class ServerControllerTest extends PostgreSQLTestDatabase {
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldUpdateServerById() throws Exception {
     Server updatedServer = new Server("Autumn Star", 1);
 
@@ -95,6 +106,7 @@ class ServerControllerTest extends PostgreSQLTestDatabase {
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldNotUpdateServerById() throws Exception {
     Server updatedServer = new Server("Autumn Star", 1);
     String requestBody = objectMapper.writeValueAsString(updatedServer);
@@ -106,6 +118,7 @@ class ServerControllerTest extends PostgreSQLTestDatabase {
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldArchiveServerById() throws Exception {
     mockMvc.perform(put("/servers/" + winterStar.getId() + "/archive")
                     .contentType(MediaType.APPLICATION_JSON))
@@ -113,6 +126,7 @@ class ServerControllerTest extends PostgreSQLTestDatabase {
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldNotArchiveServerById() throws Exception {
     mockMvc.perform(put("/servers/9999/archive")
                     .contentType(MediaType.APPLICATION_JSON))

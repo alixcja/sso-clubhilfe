@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -52,6 +53,16 @@ class AdRequestControllerTest extends PostgreSQLTestDatabase {
 
   @Test
   @Transactional
+  void shouldReturnUnauthorized() throws Exception {
+
+    this.mockMvc
+            .perform(get("/ad-requests/1"))
+            .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  @Transactional
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldReturnAdRequestById1() throws Exception {
 
     String message = "Wir, die Gold Roses Family, sind ein aktiver und liebevoll geführter Club mit viel Herzblut und Teamgeist.\n" +
@@ -75,6 +86,7 @@ class AdRequestControllerTest extends PostgreSQLTestDatabase {
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldReturnAdRequestsSortedByClubNameAsc() throws Exception {
     AdRequest bClub = new AdRequest();
     bClub.setClubName("Beta Club");
@@ -93,6 +105,7 @@ class AdRequestControllerTest extends PostgreSQLTestDatabase {
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldReturnAdRequestsSortedByStatusDesc() throws Exception {
     AdRequest second = new AdRequest();
     second.setClubName("Beta Club");
@@ -113,6 +126,7 @@ class AdRequestControllerTest extends PostgreSQLTestDatabase {
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldReturn404WhenAdRequestNotFound() throws Exception {
     mockMvc
             .perform(get("/ad-requests/9999"))
@@ -147,6 +161,7 @@ class AdRequestControllerTest extends PostgreSQLTestDatabase {
 
   @Test
   @Transactional
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldUpdateStatusAdRequestById() throws Exception {
     AdRequest existing = new AdRequest();
     existing.setClubName("Club to update");
@@ -165,6 +180,7 @@ class AdRequestControllerTest extends PostgreSQLTestDatabase {
   }
 
   @Test
+  @WithMockUser(username="admin",roles={"ADMIN"})
   void shouldNotUpdateStatusByIdDueInvalidAdRequestId() throws Exception {
     String newStatusJson = objectMapper.writeValueAsString(RequestStatus.COMPLETED);
 

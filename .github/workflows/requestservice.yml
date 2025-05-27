@@ -38,7 +38,7 @@ jobs:
             
       - name: Build Docker image
         run: |
-          docker build -f src/main/docker/Dockerfile.jvm -t alixcja/clubhilfe-requestservice:dev-${{ env.TAG }} .
+          cd requestservice && docker build -f src/main/docker/Dockerfile.jvm -t alixcja/clubhilfe-requestservice:dev-${{ env.TAG }} .
 
       - name: Push Docker image
         run: |

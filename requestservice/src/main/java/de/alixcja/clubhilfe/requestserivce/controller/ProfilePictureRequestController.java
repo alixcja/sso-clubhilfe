@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 @RestController
 public class ProfilePictureRequestController {
 
+  // TODO: Make request afterwards editable
   @Autowired
   ProfilePictureRepository profilePictureRepository;
 

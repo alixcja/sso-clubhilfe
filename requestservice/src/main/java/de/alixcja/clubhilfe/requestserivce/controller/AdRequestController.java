@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 @RestController
 public class AdRequestController {
 
+  // TODO: Make request afterwards editable
   @Autowired
   AdRequestRepository adRequestRepository;
 

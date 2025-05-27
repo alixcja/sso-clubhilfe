@@ -21,3 +21,4 @@ The platform originally existed as a community-driven initiative on Instagram an
 - Gallery for profile pictures and music videos created by admins
 - Tips & tricks for running and managing clubs
 - Request forms for club promotion, profile pictures, and music videos
+- Optional: Club News subpage for updates, event announcements, or featured clubs

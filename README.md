@@ -22,3 +22,8 @@ The platform originally existed as a community-driven initiative on Instagram an
 - Tips & tricks for running and managing clubs
 - Request forms for club promotion, profile pictures, and music videos
 - Optional: Club News subpage for updates, event announcements, or featured clubs
+
+### 🛠️ Tech Stack
+- The project was started to gain first-hand experience with Spring Boot for backend development.
+- The frontend framework has not been finalized yet but will likely be either React or Angular.
+- Deployment strategies is still under consideration.

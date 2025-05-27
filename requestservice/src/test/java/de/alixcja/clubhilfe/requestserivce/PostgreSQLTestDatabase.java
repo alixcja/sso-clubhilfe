@@ -1,29 +1,28 @@
 package de.alixcja.clubhilfe.requestserivce;
 
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @SpringBootTest
 public abstract class PostgreSQLTestDatabase {
-  private static final PostgreSQLContainer<?> postgresContainer;
+
+  static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:15")
+          .withDatabaseName("test")
+          .withUsername("user")
+          .withPassword("pass");
 
   static {
-    postgresContainer = new PostgreSQLContainer<>("postgres:15")
-            .withDatabaseName("test")
-            .withUsername("user")
-            .withPassword("pass");
     postgresContainer.start();
-
-    // Optionally set System properties so Spring picks them up
-    System.setProperty("DB_URL", postgresContainer.getJdbcUrl());
-    System.setProperty("DB_USERNAME", postgresContainer.getUsername());
-    System.setProperty("DB_PASSWORD", postgresContainer.getPassword());
   }
 
-  public static PostgreSQLContainer<?> getInstance() {
-    return postgresContainer;
-
+  @DynamicPropertySource
+  static void overrideProperties(DynamicPropertyRegistry registry) {
+    registry.add("spring.datasource.url", postgresContainer::getJdbcUrl);
+    registry.add("spring.datasource.username", postgresContainer::getUsername);
+    registry.add("spring.datasource.password", postgresContainer::getPassword);
   }
 }

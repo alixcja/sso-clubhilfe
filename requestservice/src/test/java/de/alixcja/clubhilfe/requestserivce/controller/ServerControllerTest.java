@@ -1,7 +1,7 @@
 package de.alixcja.clubhilfe.requestserivce.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.alixcja.clubhilfe.requestserivce.PostgreSQLTestDatabaseConfig;
+import de.alixcja.clubhilfe.requestserivce.PostgreSQLTestDatabase;
 import de.alixcja.clubhilfe.requestserivce.entity.Server;
 import de.alixcja.clubhilfe.requestserivce.repository.ServerRepository;
 import jakarta.transaction.Transactional;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class ServerControllerTest extends PostgreSQLTestDatabaseConfig {
+class ServerControllerTest extends PostgreSQLTestDatabase {
 
   @Autowired
   private MockMvc mockMvc;

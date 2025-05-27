@@ -1,7 +1,7 @@
 package de.alixcja.clubhilfe.requestserivce.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.alixcja.clubhilfe.requestserivce.PostgreSQLTestDatabaseConfig;
+import de.alixcja.clubhilfe.requestserivce.PostgreSQLTestDatabase;
 import de.alixcja.clubhilfe.requestserivce.entity.ProfilePictureRequest;
 import de.alixcja.clubhilfe.requestserivce.entity.RequestStatus;
 import de.alixcja.clubhilfe.requestserivce.repository.ProfilePictureRepository;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @ContextConfiguration
-class ProfilePictureRequestRequestControllerTest extends PostgreSQLTestDatabaseConfig {
+class ProfilePictureRequestRequestControllerTest extends PostgreSQLTestDatabase {
   @Autowired
   private MockMvc mockMvc;
 
